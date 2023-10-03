@@ -2,6 +2,7 @@
 <h1 align="center">Vante Database</h1>
 <h6 align="center">Developed with 💙 by Vante (@q7x)</h6>
 <h4 align="center">⚡ It provides basic CRUD (Create, Read, Update, Delete) operations on JSON files.</h6>
+
 ---
 
 VanteDB is a lightweight Node.js database library that simplifies basic CRUD (Create, Read, Update, Delete) operations on JSON files. It's designed to be easy to use and suitable for small to medium-sized projects where a full-fledged database system might be overkill
