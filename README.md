@@ -37,8 +37,12 @@ const db = new Database("Json", {
 const guildID = "your_guild_id";
 
 (async () => {
-    // Create data
-    await db.create(guildID, "users", [{ id: 1, name: "Vante" }]);
+   // Create data
+    await db.create(guildID, "users", [
+        { id: 1, name: "Vante" },
+        { id: 2, name: "Kaan", nick: "q7x", level: 2, xp: 20 }
+    ]);
+    
     await db.create(guildID, "settings", { prefix: "." });
 
     // Set data
@@ -49,19 +53,23 @@ const guildID = "your_guild_id";
     const prefixData = await db.read(guildID, "settings", "prefix");
 
     // Update data
-    await db.update(guildID, "users", (user) => user.id === 1, { name: "Kaan", age: 18 }, { apply: false });
+    await db.update(guildID, "users", (user) => user.id === 1, { nick: "q7x", level: 1, xp: 10 }, { apply: false });
+    // output: { id: 1, name: "Vante", nick: "q7x", level: 1, xp: 10 }
+
+    await db.update(guildID, "users", (user) => user.id === 1, { level: 1, xp: 10 }, { apply: true });
+    // output: { id: 1, name: "Vante", nick: "q7x", level: 2, xp: 20 };
 
     // Delete data
-    await db.delete(guildID, "users", (user) => user.id === 1);
+    await db.delete(guildID, "users", (user) => user.id === 2);
 
-    // Find data
+    // Find data 
     const foundUser = await db.find(guildID, "users", (user) => user.id === 1);
 
     // Update multiple items
-    await db.updateMany(guildID, "users", (user) => user.name === "Vante", { name: "q7x", xp: 10 }, { apply: true });
+    await db.updateMany(guildID, "users", (user) => user.name === "Vante", { level: 1, xp: 10 }, { apply: false });
 
     // Delete multiple items
-    await db.deleteMany(guildID, "users", (user) => user.name === "q7x");
+    await db.deleteMany(guildID, "users", (user) => user.name === "Vante");
 })();
 ```
 
