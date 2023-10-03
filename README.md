@@ -19,6 +19,8 @@ VanteDB is a lightweight Node.js database library that simplifies basic CRUD (Cr
 You can install VanteDB via npm:
 ```bash
 npm install vantedb
+# or
+yarn add vantedb
 ```
 
 ## Usage
@@ -35,34 +37,31 @@ const db = new Database("Json", {
 const guildID = "your_guild_id";
 
 (async () => {
-    // Create multiple user records
-    await db.create(guildID, "users", [
-        { id: 1, name: "Vante" },
-        { id: 2, name: "Kaan" },
-        { id: 3, name: "Karahanli" },
-        { id: 4, name: "Ertusmom" },
-    ]);
-    console.log("Created user records.");
+    // Create data
+    await db.create(guildID, "users", [{ id: 1, name: "Vante" }]);
+    await db.create(guildID, "settings", { prefix: "." });
 
-    // Read all user records
-    const users = await db.read(guildID, "users");
-    console.log("All users:", users);
+    // Set data
+    await db.set(guildID, "settings", { db: "prefix", data: "-" });
 
-    // Update multiple user records where the name is "Vante" to "Kaan"
-    await db.updateMany(guildID, "users", (user) => user.name === "Vante", { name: "Kaan" });
-    console.log("Updated user records with name 'Vante' to 'Kaan'.");
+    // Read data
+    const userData = await db.read(guildID, "users");
+    const prefixData = await db.read(guildID, "settings", "prefix");
 
-    // Read all user records after the update
-    const updatedUsers = await db.read(guildID, "users");
-    console.log("Updated users:", updatedUsers);
+    // Update data
+    await db.update(guildID, "users", (user) => user.id === 1, { name: "Kaan", age: 18 }, { apply: false });
 
-    // Delete multiple user records where the name is "Kaan"
-    await db.deleteMany(guildID, "users", (user) => user.name === "Kaan");
-    console.log("Deleted user records with name 'Kaan'.");
+    // Delete data
+    await db.delete(guildID, "users", (user) => user.id === 1);
 
-    // Read all user records after the deletion
-    const remainingUsers = await db.read(guildID, "users");
-    console.log("Remaining users:", remainingUsers);
+    // Find data
+    const foundUser = await db.find(guildID, "users", (user) => user.id === 1);
+
+    // Update multiple items
+    await db.updateMany(guildID, "users", (user) => user.name === "Vante", { name: "q7x", xp: 10 }, { apply: true });
+
+    // Delete multiple items
+    await db.deleteMany(guildID, "users", (user) => user.name === "q7x");
 })();
 ```
 
