@@ -16,8 +16,6 @@ VanteDB is a lightweight Node.js database library that simplifies basic CRUD (Cr
 
 ## Installation
 
-### woo
-
 You can install VanteDB via npm:
 ```bash
 npm install vantedb
@@ -28,51 +26,94 @@ yarn add vantedb
 ## Usage
 
 Here's a quick example of how to use VanteDB:
-```js
+
+### Initialize the Database:
+
+Create a new instance of the Database class with the desired configuration:
+```javascript
 const { Database } = require("vantedb");
 
-// Initialize the database with the 'Json' type and a folder location
-const db = new Database("Json", {
-    Folder: 'Example/VanteDB'
+const db = new Database({ Folder: 'YourDBFolder', UpdateCheck: false });
+```
+- Folder: Specify the folder where your database files will be stored.
+- UpdateCheck: Enable or disable automatic database update checks by setting this option to true or false.
+
+
+### Creating a Model (Required)
+
+VanteDB allows you to define data models for your collections. Models provide structure and validation for your data. To define a model, use the ` model ` method:
+```javascript
+await db.model('Users', {
+    userID: { Type: 'String', Default: "" },
+    name: { Type: 'String', Default: "" },
+    age: { Type: 'Number', Default: 0 },
+    skills: { Type: 'Array', Default: [] },
+    owner: { Type: 'Boolean', Default: true },
+    stats: { Type: 'Object', Default: {} }
 });
+```
 
-const guildID = "your_guild_id";
+### Creating Documents
 
-(async () => {
-   // Create data
-    await db.create(guildID, "users", [
-        { id: 1, name: "Vante" },
-        { id: 2, name: "Kaan", nick: "q7x", level: 2, xp: 20 }
-    ]);
-    
-    await db.create(guildID, "settings", { prefix: "." });
+You can create documents in your collections using the ` create ` method. For example:
+```
+await db.create('Cluster', 'Users', { userID: 'user1' });
+```
 
-    // Set data
-    await db.set(guildID, "settings", { db: "prefix", data: "-" });
+### Finding Documents
 
-    // Read data
-    const userData = await db.read(guildID, "users");
-    const prefixData = await db.read(guildID, "settings", "prefix");
+Retrieve documents from your collections using the ` find ` method. You can perform queries, sorting, limiting, and skipping as needed:
+```javascript 
+await db.find('Cluster', 'Users', {}); // Retrieve all documents
 
-    // Update data
-    await db.update(guildID, "users", (user) => user.id === 1, { nick: "q7x", level: 1, xp: 10 }, { apply: false });
-    // output: { id: 1, name: "Vante", nick: "q7x", level: 1, xp: 10 }
+await db.find('Cluster', 'Users', { userID: 'user1' }); // Retrieve documents with a specific query
 
-    await db.update(guildID, "users", (user) => user.id === 1, { level: 1, xp: 10 }, { apply: true });
-    // output: { id: 1, name: "Vante", nick: "q7x", level: 2, xp: 20 };
+await db.find('Cluster', 'Users', {}, { sort: ["stats.wins", -1], limit: 1 }); // Sort and limit results
 
-    // Delete data
-    await db.delete(guildID, "users", (user) => user.id === 2);
+await db.find('Cluster', 'Users', {}, { sort: ["stats.wins", -1], limit: 2, skip: 1 }); // Skip and limit results
+```
 
-    // Find data 
-    const foundUser = await db.find(guildID, "users", (user) => user.id === 1);
+### Finding a Single Document
 
-    // Update multiple items
-    await db.updateMany(guildID, "users", (user) => user.name === "Vante", { level: 1, xp: 10 }, { apply: false });
+Use the ` findOne ` method to retrieve a single document from your collections:
+```javascript
+await db.findOne('Cluster', 'Users', { userID: 'user1' });
+```
 
-    // Delete multiple items
-    await db.deleteMany(guildID, "users", (user) => user.name === "Vante");
-})();
+### Updating Documents
+Update documents in your collections using the ` update ` method. You can use operators like ` $push `, ` $pull `, ` $set `, and ` $inc ` to modify your data:
+```javascript
+await db.update('Cluster', 'Users', { owner: true }, { $push: { skills: 'ErtusMom' }, $pull: { skills: 'ErtusMom' }, $set: { rich: true }, $inc: { 'stats.kills': 1, age: 1 }});
+```
+
+### Updating a Single Document
+
+Update documents in your collections using the ` update ` method. You can use operators like ` $push `, ` $pull `, ` $set `, and ` $inc ` to modify your data:
+```javascript
+await db.updateOne('Cluster', 'Users', { userID: 'user1' },{ $set: { age: 30 } }, { new: true, upsert: true });
+```
+
+- ` upsert ` (boolean, default: false): If set to true, the method will upsert the document if it doesn't exist.
+- ` new ` (boolean, default: false): If set to true, the method will return the updated document.
+
+### Deleting Documents
+
+To delete documents, use the delete method. You can delete specific documents, entire collections, or entire clusters:
+```javascript
+await db.delete('Cluster', 'Users', { userID: 'user1' }); // Delete a specific document
+
+await db.delete('Cluster', 'Users'); // Delete the entire Users collection
+
+await db.delete('Cluster'); // Delete the entire Cluster (all collections in the cluster)
+```
+
+### Checking Database Size
+
+You can check the size of your collections/clusters using the ` size ` method. It provides information about the size of your data and the number of documents:
+```javascript
+await db.size('Cluster', 'Collection1'); // Get the size of a specific collection
+
+await db.size('Cluster'); // Get the size of the entire cluster
 ```
 
 ---
@@ -80,7 +121,6 @@ const guildID = "your_guild_id";
 ## Contributing
 
 Contributions are welcome! If you have any bug fixes, improvements, or new features to propose, please open an issue or submit a pull request.
-
 
 ## License
 

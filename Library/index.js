@@ -1,0 +1,1 @@
+exports.Database = require("./Database/Manager");

@@ -2,16 +2,16 @@
     "name": "vantedb",
     "description": "VanteDB is a simple, lightweight database library for Node.js.",
     "homepage": "https://vante.dev/",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "author": "Kaan 'Vante' Karahanlı",
-    "development": false,
 
-    "main": "./index.js",
+    "main": "./Library/index.js",
+    "types": "./index.ts",
     
     "license": "GPL-3.0",
 
     "scripts": {
-      "dev": "node ./Example/Database.js"
+      "dev": "node ./Usage/Example.js"
     },
 
     "repository": {
