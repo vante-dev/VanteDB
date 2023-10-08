@@ -16,6 +16,8 @@ VanteDB is a lightweight Node.js database library that simplifies basic CRUD (Cr
 
 ## Installation
 
+# woo
+
 You can install VanteDB via npm:
 ```bash
 npm install vantedb
