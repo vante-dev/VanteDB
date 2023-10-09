@@ -222,22 +222,22 @@ class VanteDatabase {
         }
     }
 
-    async findOne(Cluster, Collection, query = {}) {
+    async findOne(Cluster, Collection, query = {}, options = { upsert: false }) {
         try {
             const model = await this.read('-Models', Collection);
-
+    
             if (!model) {
                 throw new Error(`Collection model for '${Collection}' does not exist. Create a model first.`);
             }
-
+    
             const data = await this.read(Cluster, Collection) || [];
-
+    
             for (const key in query) {
                 if (!(key in model)) {
                     throw new Error(`Query field '${key}' is not defined in the '${Collection}' model.`);
                 }
             }
-
+    
             const matchingDocument = data.find((item) => {
                 for (const key in query) {
                     if (item[key] !== query[key]) {
@@ -246,12 +246,21 @@ class VanteDatabase {
                 }
                 return true;
             });
-
+    
+            if (!matchingDocument && options.upsert) {
+                const defaults = Object.keys(model).filter(key => model[key].hasOwnProperty('Default')).reduce((acc, key) => { acc[key] = model[key].Default; return acc; }, {});
+                newDocument = { ...defaults, ...query };
+                data.push(newDocument);
+                await this.write(Cluster, Collection, data);
+                return newDocument;
+            }
+    
             return matchingDocument || null;
         } catch (error) {
             throw new Error(`Error finding one document: ${error.message}`);
         }
     }
+    
 
     async update(Cluster, Collection, query, update) {
         try {

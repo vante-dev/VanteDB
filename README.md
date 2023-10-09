@@ -77,7 +77,7 @@ await db.find('Cluster', 'Users', {}, { sort: ["stats.wins", -1], limit: 2, skip
 
 Use the ` findOne ` method to retrieve a single document from your collections:
 ```javascript
-await db.findOne('Cluster', 'Users', { userID: 'user1' });
+await db.findOne('Cluster', 'Users', { userID: 'user1' }, { upsert: false });
 ```
 
 ### Updating Documents
