@@ -1,23 +1,4 @@
-<br/>
-<h1 align="center">Vante Database</h1>
-<h6 align="center">Developed with 💙 by Vante (@q7x)</h6>
-<h4 align="center">⚡ It provides basic CRUD (Create, Read, Update, Delete) operations on JSON files.</h6>
-
----
-
-VanteDB is a lightweight Node.js database library that simplifies basic CRUD (Create, Read, Update, Delete) operations on JSON files. It's designed to be easy to use and suitable for small to medium-sized projects where a full-fledged database system might be overkill
-
-## Features
-
-* **Simple Setup:** Get started quickly with minimal configuration.
-* **JSON Storage:** Store data in JSON files for easy readability and management.
-* **Asynchronous Operations:** Perform database operations asynchronously using Promises.
-* **Filter and Update:** Easily filter and update records in your collections.
-
-## Usage
-
-```js
-const vanteDB = require('vantedb');
+const vanteDB = require('../Library/index');
 
 // Define a schema for a collection
 const userSchema = {
@@ -67,13 +48,3 @@ const userData = {
       console.error('Error performing CRUD operations:', error.message);
     }
   })();
-```
----
-
-## Contributing
-
-Contributions are welcome! If you have any bug fixes, improvements, or new features to propose, please open an issue or submit a pull request.
-
-## License
-
-VanteDB is licensed under the **GPL-3.0** License. See the [LICENSE](https://github.com/vante-dev/vantedb/blob/main/LICENSE) file for details.
