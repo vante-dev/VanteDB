@@ -299,7 +299,7 @@ class VanteDatabase {
       
         return {
           find: async (filter, options = {}) => await this.find(name, filter, { ...options, multi: true }),
-          findOne: async (filter) => await this.find(name, filter, { ...options, multi: false }),
+          findOne: async (filter, options = {}) => await this.find(name, filter, { ...options, multi: false }),
           updateOne: async (filter, update, options = {}) => await this.update(name, filter, update, { ...options, multi: false }),
           updateMany: async (filter, update, options = {}) => await this.update(name, filter, update, { ...options, multi: true }),
           deleteOne: async (filter) => await this.delete(name, filter, { multi: false }),
