@@ -271,8 +271,8 @@ class VanteDatabase {
         try {
           await writeFile(filePath, JSON.stringify(newData, null, 2), 'utf-8');
     
-          const cleanedData = [newData[0]];
-          if (newData[0]) await writeFile(filePath, JSON.stringify(cleanedData, null, 2), 'utf-8');
+          const cleanedData = newData;
+          if (newData) await writeFile(filePath, JSON.stringify(cleanedData, null, 2), 'utf-8');
         } catch (error) {
           throw new Error(`Error saving and cleaning data for collection ${collectionName}: ${error.message}`);
         }
@@ -302,9 +302,9 @@ class VanteDatabase {
           findOne: async (filter, options = {}) => await this.find(name, filter, { ...options, multi: false }),
           updateOne: async (filter, update, options = {}) => await this.update(name, filter, update, { ...options, multi: false }),
           updateMany: async (filter, update, options = {}) => await this.update(name, filter, update, { ...options, multi: true }),
-          deleteOne: async (filter) => await this.delete(name, filter, { multi: false }),
-          deleteMany: async (filter) => await this.delete(name, filter, { multi: true }),
-          create: async (data) => await this.create(name, data),
+          deleteOne: async (filter, options = {}) => await this.delete(name, filter, { multi: false }),
+          deleteMany: async (filter, options = {}) => await this.delete(name, filter, { multi: true }),
+          create: async (data, options = {}) => await this.create(name, data, options = {}),
           ...methods,
         };
     };
@@ -394,7 +394,6 @@ class VanteDatabase {
     
       const deletedItems = options.multi ? [...filteredData] : [filteredData[0]];
     
-      // Modify the existing array in-place
       for (const item of filteredData) {
         const index = collection.data.indexOf(item);
         if (index !== -1) {

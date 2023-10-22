@@ -4,7 +4,7 @@ const vanteDB = require('../Library/index');
 const userSchema = {
     username: { type: String, default: 'Kaan Karahanlı' },
     age: Number,
-    email: String,
+    email: { type: String, default: "upchh@example.com"},
     isAdmin: Boolean,
     interests: Array,
 };
@@ -14,7 +14,7 @@ const UserModel = vanteDB.model('users', userSchema);
 
 // Example data
 const userData = {
-    username: 'Kaan Karahanlı',
+    username: 'Muhammed',
     age: 19,
     email: 'hi@vante.dev',
     isAdmin: false,
@@ -29,7 +29,7 @@ const userData = {
       console.log('Created User:', createdUser);
   
       // Update many using $set operator
-      const updatedUsersSet = await UserModel.updateMany({ isAdmin: false }, { $set: { isAdmin: true } });
+      const updatedUsersSet = await UserModel.updateMany({ isAdmin: false }, { $set: { isAdmin: true, email: "muhrode" } });
       console.log('Updated Users with $set operator:', updatedUsersSet);
   
       // Find users
@@ -37,12 +37,12 @@ const userData = {
       console.log('Found Users:', foundUsers);
   
       // Delete one user
-      const deletedUser = await UserModel.deleteOne({ username: 'Kaan Karahanlı' });
-      console.log('Deleted User:', deletedUser);
+      //const deletedUser = await UserModel.deleteOne({ username: 'Muhammed' });
+      //console.log('Deleted User:', deletedUser);
   
       // Delete many users
-      const deletedUsers = await UserModel.deleteMany({ isAdmin: true });
-      console.log('Deleted Users:', deletedUsers);
+      //const deletedUsers = await UserModel.deleteMany({ isAdmin: true });
+      //console.log('Deleted Users:', deletedUsers);
   
     } catch (error) {
       console.error('Error performing CRUD operations:', error.message);
