@@ -356,8 +356,7 @@ class VanteDatabase {
         let filteredData = collection.data.filter(item => this.matchFilter(item, filter));
   
         if (filteredData.length === 0 && options.upsert) {
-          const newData = this.processUpdateFields(update);
-          return this.create(collectionName, newData);
+          filteredData.push(await this.create(collectionName, filter));
         }
   
         const updateSingleItem = (item) => {
