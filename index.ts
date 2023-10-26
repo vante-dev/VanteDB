@@ -1,75 +1,55 @@
-declare module 'vante-db' {
-  type FieldType = StringConstructor | NumberConstructor | BooleanConstructor | ObjectConstructor | ArrayConstructor;
-
-  interface FieldSchema {
-    type: FieldType;
-    default?: any;
-  }
-
-  interface CollectionSchema {
-    [key: string]: FieldSchema;
-  }
-
-  interface QueryOptions {
+declare module 'vantedb' {
+  interface VanteDatabaseOptions {
+    upsert?: boolean;
     multi?: boolean;
     sort?: string | [string, number];
     skip?: number;
     limit?: number;
-    dryRun?: boolean;
-    upsert?: boolean;
-  }
-
-  interface UpdateFields {
-    [key: string]: any;
+    Cluster?: string;
   }
 
   interface VanteDatabaseMethods {
-    [key: string]: (...args: any[]) => any;
+    find(filter: any, options?: VanteDatabaseOptions): Promise<any[]>;
+    findOne(filter: any, options?: VanteDatabaseOptions): Promise<any | null>;
+    updateOne(filter: any, update: any, options?: VanteDatabaseOptions): Promise<any | null>;
+    updateMany(filter: any, update: any, options?: VanteDatabaseOptions): Promise<any[]>;
+    deleteOne(filter: any, options?: VanteDatabaseOptions): Promise<any | null>;
+    deleteMany(filter: any, options?: VanteDatabaseOptions): Promise<any[]>;
+    create(data: any, options?: VanteDatabaseOptions): Promise<any>;
+    set(Key: string, Value: any, Options?: VanteDatabaseOptions): Promise<any>;
+    push(Key: string, Value: any, Options?: VanteDatabaseOptions): Promise<any>;
+    pull(Key: string, Value: any, Options?: VanteDatabaseOptions): Promise<any>;
+    get(Key: string, Options?: VanteDatabaseOptions): Promise<any>;
+    has(Key: string, Options?: VanteDatabaseOptions): Promise<boolean>;
+    all(Options?: VanteDatabaseOptions): Promise<any[]>;
+    add(Key: string, Value: any, Options?: VanteDatabaseOptions): Promise<any>;
+    take(Key: string, Value: any, Options?: VanteDatabaseOptions): Promise<any>;
+    delete(Key: string, Options?: VanteDatabaseOptions): Promise<void>;
   }
 
   interface VanteDatabaseModel {
-    find: (filter: any, options?: QueryOptions) => Promise<any[]>;
-    findOne: (filter: any) => Promise<any>;
-    updateOne: (filter: any, update: any, options?: QueryOptions) => Promise<any>;
-    updateMany: (filter: any, update: any, options?: QueryOptions) => Promise<any[]>;
-    deleteOne: (filter: any) => Promise<any>;
-    deleteMany: (filter: any) => Promise<any[]>;
-    create: (data: any) => Promise<any>;
+    find: VanteDatabaseMethods['find'];
+    findOne: VanteDatabaseMethods['findOne'];
+    updateOne: VanteDatabaseMethods['updateOne'];
+    updateMany: VanteDatabaseMethods['updateMany'];
+    deleteOne: VanteDatabaseMethods['deleteOne'];
+    deleteMany: VanteDatabaseMethods['deleteMany'];
+    create: VanteDatabaseMethods['create'];
+    set: VanteDatabaseMethods['set'];
+    push: VanteDatabaseMethods['push'];
+    pull: VanteDatabaseMethods['pull'];
+    get: VanteDatabaseMethods['get'];
+    has: VanteDatabaseMethods['has'];
+    all: VanteDatabaseMethods['all'];
+    add: VanteDatabaseMethods['add'];
+    take: VanteDatabaseMethods['take'];
+    delete: VanteDatabaseMethods['delete'];
   }
 
   class VanteDatabase {
-    constructor();
-
-    fetchFiles(fileName: string, options?: { upsert?: boolean }): Promise<void>;
-
-    getDefaultValueForType(type: FieldType): any;
-
-    matchFilter(item: any, filter: any): boolean;
-
-    sortData(data: any[], options: QueryOptions): any[];
-
-    applyNested(target: any, keys: string[], value: any): void;
-
-    compareWithOperator(obj: any, operator: string, newData: any): any;
-
-    saveData(collectionName: string): Promise<void>;
-
-    model(name: string, schema: CollectionSchema, methods?: VanteDatabaseMethods): VanteDatabaseModel;
-
-    find(collectionName: string, filter: any, options?: QueryOptions): Promise<any | any[]>;
-
-    processUpdateFields(update: UpdateFields): UpdateFields;
-
-    update(collectionName: string, filter: any, update: any, options?: QueryOptions): Promise<any | any[]>;
-
-    delete(collectionName: string, filter: any, options?: { multi?: boolean }): Promise<any | any[]>;
-
-    create(collectionName: string, data: any): Promise<any>;
-
-    generateUniqueId(): string;
+    model(schema: any, methods?: VanteDatabaseMethods): VanteDatabaseModel;
   }
 
-  const vanteDatabase: VanteDatabase;
-
-  export = vanteDatabase;
+  const vanteDB: VanteDatabase;
+  export = vanteDB;
 }

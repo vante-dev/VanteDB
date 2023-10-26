@@ -17,19 +17,34 @@ VanteDB is a lightweight Node.js database library that simplifies basic CRUD (Cr
 ## Usage
 
 ```js
-const vanteDB = require('vantedb');
+const VanteDatabase = require('vantedb');
 
 // Define a schema for a collection
 const userSchema = {
-  username: { type: String, default: 'Kaan Karahanlı' },
-  age: Number,
-  email: String,
-  isAdmin: Boolean,
-  interests: Array,
+    username: { type: String, default: 'Kaan Karahanlı' },
+    age: Number,
+    email: { type: String, default: "hi@vante.dev" },
+    isAdmin: Boolean,
+    interests: Array,
+    daily: Number,
+    total: Number,
 };
 
 // Create a model for the "users" collection
-const UserModel = vanteDB.model('users', userSchema);
+const UserModel = VanteDatabase.model({
+    Collection: 'Users',
+    Folder: './Global/Database/',
+    Cluster: true,
+    Type: [],
+}, userSchema);
+
+// Create a model for the "settings" collection (this one is for the key chain dbs)
+const SettingsModel = VanteDatabase.model({
+    Collection: 'Settings',
+    Folder: './Global/Database/',
+    Cluster: false,
+    Type: {},
+}, userSchema);
 
 // Example data
 const userData = {
@@ -43,39 +58,72 @@ const userData = {
 // CRUD operations
 (async () => {
   try {
-    // Create a new user
-    const createdUser = await UserModel.create(userData);
-    console.log('Created User:', createdUser);
+    // Create a User
+    await UserModel.create(userData, { Cluster: "VANTE" });
 
-    // Update many using $set operator
-    const updatedUsersSet = await UserModel.updateMany({ isAdmin: false }, { $set: { isAdmin: true } });
-    console.log('Updated Users with $set operator:', updatedUsersSet);
+    // FIND USERS
+    
+    // Find multiple users with conditions
+    const users = await UserModel.find({
+        $and: [
+            { age: { $gte: 20, $lte: 30 } },
+            { isAdmin: true }
+        ]
+    }, { Cluster: 'VANTE' });
 
-    // Find users
-    const foundUsers = await UserModel.find({ age: { $gte: 19 } }, { sort: 'age', limit: 3 });
-    console.log('Found Users:', foundUsers);
+    // Find a single user with conditions
+    const user = await UserModel.findOne({
+        $and: [
+            { age: { $gte: 20, $lte: 30 } },
+            { isAdmin: true },
+        ]
+    }, { Cluster: 'VANTE' });
 
-    // Update one user
-    const updatedUser = await UserModel.updateOne(
-      { username: 'Kaan Karahanlı' },
-      { $set: { age: 20, interests: ['coding', 'reading', 'gaming'] } }
-    );
-    console.log('Updated User with $set operator:', updatedUser);
 
-    // Update many users
-    const updatedManyUsers = await UserModel.updateMany(
-      { age: { $gte: 20 } },
-      { $inc: { age: 1 } }
-    );
-    console.log('Updated Many Users with $inc operator:', updatedManyUsers);
+    // UPDATE USER
 
-    // Delete one user
-    const deletedUser = await UserModel.deleteOne({ username: 'Kaan Karahanlı' });
-    console.log('Deleted User:', deletedUser);
+    // Update or create a user with upsert true
+    await UserModel.updateOne({ username: "kaanxsrd" }, { $inc: { daily: 1, total: 2 }}, { Cluster: 'VANTE', upsert: true });
 
-    // Delete many users
-    const deletedUsers = await UserModel.deleteMany({ isAdmin: true });
-    console.log('Deleted Users:', deletedUsers);
+    // Update multiple users
+    await UserModel.updateMany({ age: 0 }, { $set: { age: 19 } }, { Cluster: 'VANTE' });
+
+    // DELETE USER
+
+    // Delete a single user
+    await UserModel.deleteOne({ username: "vantesex" }, { Cluster: 'VANTE' });
+
+    // Delete multiple users
+    await UserModel.deleteMany({ age: 19 }, { Cluster: 'VANTE' });
+
+
+    // Old key data version 
+    // Set a value in the settings
+    await SettingsModel.set("vante", "19");
+
+    // Get a value from the settings
+    await SettingsModel.get("vante");
+
+    // Get all settings
+    await SettingsModel.all();
+
+    // Push a value from an array in settings
+    await SettingsModel.push("interest", "sa");
+
+    // Pull a value from an array in settings
+    await SettingsModel.pull("interest", "sa");
+
+    // Check if a setting exists
+    await SettingsModel.has("vante");
+
+    // Add a value in settings
+    await SettingsModel.add("age", 35);
+
+    // Take a value from settings
+    await SettingsModel.take("age", 16);
+
+    // Delete a value from settings
+    await SettingsModel.delete("age");
 
   } catch (error) {
     console.error('Error performing CRUD operations:', error.message);
